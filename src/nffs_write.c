@@ -19,9 +19,8 @@
 
 #include <assert.h>
 #include <string.h>
-#include "testutil/testutil.h"
-#include "nffs/nffs.h"
-#include "nffs_priv.h"
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 static int
 nffs_write_fill_crc16_overwrite(struct nffs_disk_block *disk_block,
@@ -53,7 +52,7 @@ nffs_write_fill_crc16_overwrite(struct nffs_disk_block *disk_block,
     /* Write the new data into the data block.  This may extend the block's
      * length beyond its old value.
      */
-    crc16 = crc16_ccitt(crc16, new_data, new_data_len);
+    crc16 = nffs_glue_crc16_ccitt(crc16, new_data, new_data_len, 0);
     block_off += new_data_len;
 
     /* Copy data from the end of the old block, in case the new data doesn't
@@ -69,6 +68,9 @@ nffs_write_fill_crc16_overwrite(struct nffs_disk_block *disk_block,
     }
 
     assert(block_off == sizeof *disk_block + disk_block->ndb_data_len);
+
+    /* Finish CRC */
+    crc16 = nffs_glue_crc16_ccitt(crc16, NULL, 0, 1);
 
     disk_block->ndb_crc16 = crc16;
 

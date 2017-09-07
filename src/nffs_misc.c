@@ -18,12 +18,11 @@
  */
 
 #include <assert.h>
-#include "flash_map/flash_map.h"
-#include "hal/hal_bsp.h"
-#include "hal/hal_flash_int.h"
-#include "os/os_malloc.h"
-#include "nffs/nffs.h"
-#include "nffs_priv.h"
+#include <stdlib.h>
+#include <string.h>
+#include <kernel.h>
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 /**
  * Determines if the file system contains a valid root directory.  For the root
@@ -248,6 +247,7 @@ nffs_misc_reserve_space(uint16_t space,
 int
 nffs_misc_set_num_areas(uint8_t num_areas)
 {
+#if NFFS_CONFIG_USE_HEAP
     if (num_areas == 0) {
         free(nffs_areas);
         nffs_areas = NULL;
@@ -257,6 +257,7 @@ nffs_misc_set_num_areas(uint8_t num_areas)
             return FS_ENOMEM;
         }
     }
+#endif
 
     nffs_num_areas = num_areas;
 
@@ -365,58 +366,18 @@ nffs_misc_reset(void)
 
     nffs_cache_clear();
 
-    rc = os_mempool_init(&nffs_file_pool, nffs_config.nc_num_files,
-                         sizeof (struct nffs_file), nffs_file_mem,
-                         "nffs_file_pool");
-    if (rc != 0) {
-        return FS_EOS;
-    }
-
-    rc = os_mempool_init(&nffs_inode_entry_pool, nffs_config.nc_num_inodes,
-                         sizeof (struct nffs_inode_entry), nffs_inode_mem,
-                         "nffs_inode_entry_pool");
-    if (rc != 0) {
-        return FS_EOS;
-    }
-
-    rc = os_mempool_init(&nffs_block_entry_pool, nffs_config.nc_num_blocks,
-                         sizeof (struct nffs_hash_entry), nffs_block_entry_mem,
-                         "nffs_block_entry_pool");
-    if (rc != 0) {
-        return FS_EOS;
-    }
-
-    rc = os_mempool_init(&nffs_cache_inode_pool,
-                         nffs_config.nc_num_cache_inodes,
-                         sizeof (struct nffs_cache_inode),
-                         nffs_cache_inode_mem, "nffs_cache_inode_pool");
-    if (rc != 0) {
-        return FS_EOS;
-    }
-
-    rc = os_mempool_init(&nffs_cache_block_pool,
-                         nffs_config.nc_num_cache_blocks,
-                         sizeof (struct nffs_cache_block),
-                         nffs_cache_block_mem, "nffs_cache_block_pool");
-    if (rc != 0) {
-        return FS_EOS;
-    }
-
-    rc = os_mempool_init(&nffs_dir_pool,
-                         nffs_config.nc_num_dirs,
-                         sizeof (struct nffs_dir),
-                         nffs_dir_mem, "nffs_dir_pool");
-    if (rc != 0) {
-        return FS_EOS;
-    }
+    nffs_glue_mempool_init();
 
     rc = nffs_hash_init();
     if (rc != 0) {
         return rc;
     }
 
+#if NFFS_CONFIG_USE_HEAP
     free(nffs_areas);
     nffs_areas = NULL;
+#endif
+
     nffs_num_areas = 0;
 
     nffs_root_dir = NULL;
@@ -451,30 +412,21 @@ nffs_misc_ready(void)
  * to a region.
  */
 int
-nffs_misc_desc_from_flash_area(int id, int *cnt, struct nffs_area_desc *nad)
+nffs_misc_desc_from_flash_area(const struct nffs_flash_desc *flash, int *cnt, struct nffs_area_desc *nad)
 {
     int i, j;
-    const struct hal_flash *hf;
-    const struct flash_area *fa;
     int max_cnt, move_on;
     int first_idx, last_idx;
     uint32_t start, size;
     uint32_t min_size;
-    int rc;
 
     first_idx = last_idx = -1;
     max_cnt = *cnt;
     *cnt = 0;
 
-    rc = flash_area_open(id, &fa);
-    if (rc != 0) {
-        return -1;
-    }
-
-    hf = hal_bsp_flash_dev(fa->fa_device_id);
-    for (i = 0; i < hf->hf_sector_cnt; i++) {
-        hf->hf_itf->hff_sector_info(hf, i, &start, &size);
-        if (start >= fa->fa_off && start < fa->fa_off + fa->fa_size) {
+    for (i = 0; i < flash->sector_count; i++) {
+        nffs_glue_flash_info(flash->id, i, &start, &size);
+        if (start >= flash->area_offset && start < flash->area_offset + flash->area_size) {
             if (first_idx == -1) {
                 first_idx = i;
             }
@@ -483,7 +435,7 @@ nffs_misc_desc_from_flash_area(int id, int *cnt, struct nffs_area_desc *nad)
         }
     }
     if (*cnt > max_cnt) {
-        min_size = fa->fa_size / max_cnt;
+        min_size = flash->area_size / max_cnt;
     } else {
         min_size = 0;
     }
@@ -491,9 +443,9 @@ nffs_misc_desc_from_flash_area(int id, int *cnt, struct nffs_area_desc *nad)
 
     move_on = 1;
     for (i = first_idx, j = 0; i < last_idx + 1; i++) {
-        hf->hf_itf->hff_sector_info(hf, i, &start, &size);
+        nffs_glue_flash_info(flash->id, i, &start, &size);
         if (move_on) {
-            nad[j].nad_flash_id = fa->fa_device_id;
+            nad[j].nad_flash_id = flash->id;
             nad[j].nad_offset = start;
             nad[j].nad_length = size;
             *cnt = *cnt + 1;
@@ -507,5 +459,6 @@ nffs_misc_desc_from_flash_area(int id, int *cnt, struct nffs_area_desc *nad)
         }
     }
     nad[*cnt].nad_length = 0;
+
     return 0;
 }

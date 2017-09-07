@@ -19,18 +19,15 @@
 
 #include <assert.h>
 #include <string.h>
-#include "nffs_priv.h"
-#include "nffs/nffs.h"
-#include "fs/fs_if.h"
-
-struct fs_ops nffs_ops;
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 static struct nffs_file *
 nffs_file_alloc(void)
 {
     struct nffs_file *file;
 
-    file = os_memblock_get(&nffs_file_pool);
+    file = nffs_glue_mempool_get(&nffs_file_pool);
     if (file != NULL) {
         memset(file, 0, sizeof *file);
     }
@@ -44,7 +41,7 @@ nffs_file_free(struct nffs_file *file)
     int rc;
 
     if (file != NULL) {
-        rc = os_memblock_put(&nffs_file_pool, file);
+        rc = nffs_glue_mempool_free(&nffs_file_pool, file);
         if (rc != 0) {
             return FS_EOS;
         }
@@ -245,7 +242,6 @@ nffs_file_open(struct nffs_file **out_file, const char *path,
     }
     nffs_inode_inc_refcnt(file->nf_inode_entry);
     file->nf_access_flags = access_flags;
-    file->fops = &nffs_ops;
 
     *out_file = file;
 

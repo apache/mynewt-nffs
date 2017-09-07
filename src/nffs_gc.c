@@ -19,10 +19,8 @@
 
 #include <assert.h>
 #include <string.h>
-#include "os/os_malloc.h"
-#include "testutil/testutil.h"
-#include "nffs_priv.h"
-#include "nffs/nffs.h"
+#include <kernel.h>
+#include <nffs/nffs.h>
 
 /**
  * Keeps track of the number of garbage collections performed.  The exact
@@ -182,17 +180,23 @@ nffs_gc_block_chain_collate(struct nffs_hash_entry *last_entry,
     uint32_t to_area_offset;
     uint32_t from_area_offset;
     uint32_t data_offset;
+#if NFFS_CONFIG_USE_HEAP
     uint8_t *data;
+#else
+    static uint8_t data[NFFS_BLOCK_MAX_DATA_SZ_MAX];
+#endif
     uint8_t from_area_idx;
     int rc;
 
     memset(&last_block, 0, sizeof last_block);
 
+#if NFFS_CONFIG_USE_HEAP
     data = malloc(data_len);
     if (data == NULL) {
         rc = FS_ENOMEM;
         goto done;
     }
+#endif
 
     to_area = nffs_areas + to_area_idx;
 
@@ -267,7 +271,9 @@ nffs_gc_block_chain_collate(struct nffs_hash_entry *last_entry,
                                                 to_area_offset) == 0);
 
 done:
+#if NFFS_CONFIG_USE_HEAP
     free(data);
+#endif
     return rc;
 }
 

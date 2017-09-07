@@ -19,8 +19,7 @@
 
 #include <assert.h>
 #include <string.h>
-#include "nffs_priv.h"
-#include "nffs/nffs.h"
+#include <nffs/nffs.h>
 
 static void
 nffs_area_set_magic(struct nffs_disk_area *disk_area)

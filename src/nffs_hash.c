@@ -20,10 +20,13 @@
 #include <stddef.h>
 #include <string.h>
 #include <assert.h>
-#include "nffs/nffs.h"
-#include "nffs_priv.h"
+#include <kernel.h>
+#include <nffs/nffs.h>
 
 struct nffs_hash_list *nffs_hash;
+#if !NFFS_CONFIG_USE_HEAP
+static uint8_t nffs_hash_buf[NFFS_HASH_SIZE * sizeof *nffs_hash];
+#endif
 
 uint32_t nffs_hash_next_dir_id;
 uint32_t nffs_hash_next_file_id;
@@ -199,12 +202,16 @@ nffs_hash_init(void)
 {
     int i;
 
+#if NFFS_CONFIG_USE_HEAP
     free(nffs_hash);
 
     nffs_hash = malloc(NFFS_HASH_SIZE * sizeof *nffs_hash);
     if (nffs_hash == NULL) {
         return FS_ENOMEM;
     }
+#else
+    nffs_hash = (struct nffs_hash_list *) nffs_hash_buf;
+#endif
 
     for (i = 0; i < NFFS_HASH_SIZE; i++) {
         SLIST_INIT(nffs_hash + i);
