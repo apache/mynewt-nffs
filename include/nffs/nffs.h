@@ -522,8 +522,20 @@ int nffs_write_to_file(struct nffs_file *file, const void *data, int len);
 
 #define NFFS_FLASH_LOC_NONE  nffs_flash_loc(NFFS_AREA_ID_NONE, 0)
 
+#if __ZEPHYR__
+
+#define NFFS_LOG(lvl, ...)
+#define MYNEWT_VAL(val) 0
+#define ASSERT_IF_TEST(cond)
+#define STATS_INC(sectvarname, var)
+
+#else
+
+/* Default to Mynewt */
+
 #define NFFS_LOG(lvl, ...) \
     LOG_ ## lvl(&nffs_log, LOG_MODULE_NFFS, __VA_ARGS__)
+#endif
 
 #ifdef __cplusplus
 }
