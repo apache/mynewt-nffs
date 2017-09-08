@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <string.h>
 #include <nffs/nffs.h>
-#include <nffs/glue.h>
+#include <nffs/os.h>
 
 /**
  * Turns a scratch area into a non-scratch area.  If the specified area is not
@@ -71,7 +71,7 @@ nffs_format_area(uint8_t area_idx, int is_scratch)
 
     area = nffs_areas + area_idx;
 
-    rc = nffs_glue_flash_erase(area->na_flash_id, area->na_offset, area->na_length);
+    rc = nffs_os_flash_erase(area->na_flash_id, area->na_offset, area->na_length);
     if (rc != 0) {
         return FS_EHW;
     }
