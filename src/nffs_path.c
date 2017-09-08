@@ -19,8 +19,7 @@
 
 #include <assert.h>
 #include <string.h>
-#include "nffs/nffs.h"
-#include "nffs_priv.h"
+#include <nffs/nffs.h>
 
 int
 nffs_path_parse_next(struct nffs_path_parser *parser)

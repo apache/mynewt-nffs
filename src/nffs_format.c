@@ -19,9 +19,8 @@
 
 #include <assert.h>
 #include <string.h>
-#include "hal/hal_flash.h"
-#include "nffs_priv.h"
-#include "nffs/nffs.h"
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 /**
  * Turns a scratch area into a non-scratch area.  If the specified area is not
@@ -72,7 +71,7 @@ nffs_format_area(uint8_t area_idx, int is_scratch)
 
     area = nffs_areas + area_idx;
 
-    rc = hal_flash_erase(area->na_flash_id, area->na_offset, area->na_length);
+    rc = nffs_glue_flash_erase(area->na_flash_id, area->na_offset, area->na_length);
     if (rc != 0) {
         return FS_EHW;
     }
@@ -116,7 +115,7 @@ nffs_format_full(const struct nffs_area_desc *area_descs)
     /* Select largest area to be the initial scratch area. */
     nffs_scratch_area_idx = 0;
     for (i = 1; area_descs[i].nad_length != 0; i++) {
-        if (i >= NFFS_MAX_AREAS) {
+        if (i >= NFFS_CONFIG_MAX_AREAS) {
             rc = FS_EINVAL;
             goto err;
         }

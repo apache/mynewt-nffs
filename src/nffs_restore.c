@@ -20,11 +20,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "hal/hal_flash.h"
-#include "os/os_mempool.h"
-#include "os/os_malloc.h"
-#include "nffs/nffs.h"
-#include "nffs_priv.h"
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 /**
  * The size of the largest data block encountered during detection.  This is
@@ -1107,7 +1104,7 @@ nffs_restore_detect_one_area(uint8_t flash_id, uint32_t area_offset,
     int rc;
 
     STATS_INC(nffs_stats, nffs_readcnt_detect);
-    rc = hal_flash_read(flash_id, area_offset, out_disk_area,
+    rc = nffs_glue_flash_read(flash_id, area_offset, out_disk_area,
                         sizeof *out_disk_area);
     if (rc != 0) {
         return FS_EHW;
@@ -1306,7 +1303,7 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
 
     /* Read each area from flash. */
     for (i = 0; area_descs[i].nad_length != 0; i++) {
-        if (i > NFFS_MAX_AREAS) {
+        if (i > NFFS_CONFIG_MAX_AREAS) {
             rc = FS_EINVAL;
             goto err;
         }

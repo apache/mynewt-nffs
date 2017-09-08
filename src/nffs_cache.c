@@ -19,8 +19,8 @@
 
 #include <assert.h>
 #include <string.h>
-#include "nffs/nffs.h"
-#include "nffs_priv.h"
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 TAILQ_HEAD(nffs_cache_inode_list, nffs_cache_inode);
 static struct nffs_cache_inode_list nffs_cache_inode_list =
@@ -33,7 +33,7 @@ nffs_cache_block_alloc(void)
 {
     struct nffs_cache_block *entry;
 
-    entry = os_memblock_get(&nffs_cache_block_pool);
+    entry = nffs_glue_mempool_get(&nffs_cache_block_pool);
     if (entry != NULL) {
         memset(entry, 0, sizeof *entry);
     }
@@ -45,7 +45,7 @@ static void
 nffs_cache_block_free(struct nffs_cache_block *entry)
 {
     if (entry != NULL) {
-        os_memblock_put(&nffs_cache_block_pool, entry);
+        nffs_glue_mempool_free(&nffs_cache_block_pool, entry);
     }
 }
 
@@ -88,7 +88,7 @@ nffs_cache_inode_alloc(void)
 {
     struct nffs_cache_inode *entry;
 
-    entry = os_memblock_get(&nffs_cache_inode_pool);
+    entry = nffs_glue_mempool_get(&nffs_cache_inode_pool);
     if (entry != NULL) {
         memset(entry, 0, sizeof *entry);
         TAILQ_INIT(&entry->nci_block_list);
@@ -113,7 +113,7 @@ nffs_cache_inode_free(struct nffs_cache_inode *entry)
 {
     if (entry != NULL) {
         nffs_cache_inode_free_blocks(entry);
-        os_memblock_put(&nffs_cache_inode_pool, entry);
+        nffs_glue_mempool_free(&nffs_cache_inode_pool, entry);
     }
 }
 

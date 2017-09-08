@@ -18,9 +18,8 @@
  */
 
 #include <assert.h>
-#include "hal/hal_flash.h"
-#include "nffs/nffs.h"
-#include "nffs_priv.h"
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 /** A buffer used for flash reads; shared across all of nffs. */
 uint8_t nffs_flash_buf[NFFS_FLASH_BUF_SZ];
@@ -55,7 +54,7 @@ nffs_flash_read(uint8_t area_idx, uint32_t area_offset, void *data,
     }
 
     STATS_INC(nffs_stats, nffs_iocnt_read);
-    rc = hal_flash_read(area->na_flash_id, area->na_offset + area_offset, data,
+    rc = nffs_glue_flash_read(area->na_flash_id, area->na_offset + area_offset, data,
                         len);
     if (rc != 0) {
         return FS_EHW;
@@ -97,7 +96,7 @@ nffs_flash_write(uint8_t area_idx, uint32_t area_offset, const void *data,
     }
 
     STATS_INC(nffs_stats, nffs_iocnt_write);
-    rc = hal_flash_write(area->na_flash_id, area->na_offset + area_offset,
+    rc = nffs_glue_flash_write(area->na_flash_id, area->na_offset + area_offset,
                          data, len);
     if (rc != 0) {
         return FS_EHW;

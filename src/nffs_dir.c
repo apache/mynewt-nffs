@@ -19,18 +19,15 @@
 
 #include <assert.h>
 #include <string.h>
-#include "nffs_priv.h"
-#include "nffs/nffs.h"
-#include "fs/fs_if.h"
-
-struct fs_ops nffs_ops;
+#include <nffs/nffs.h>
+#include <nffs/glue.h>
 
 static struct nffs_dir *
 nffs_dir_alloc(void)
 {
     struct nffs_dir *dir;
 
-    dir = os_memblock_get(&nffs_dir_pool);
+    dir = nffs_glue_mempool_get(&nffs_dir_pool);
     if (dir != NULL) {
         memset(dir, 0, sizeof *dir);
     }
@@ -44,7 +41,7 @@ nffs_dir_free(struct nffs_dir *dir)
     int rc;
 
     if (dir != NULL) {
-        rc = os_memblock_put(&nffs_dir_pool, dir);
+        rc = nffs_glue_mempool_free(&nffs_dir_pool, dir);
         if (rc != 0) {
             return FS_EOS;
         }
@@ -77,7 +74,6 @@ nffs_dir_open(const char *path, struct nffs_dir **out_dir)
     dir->nd_parent_inode_entry = parent_inode_entry;
     nffs_inode_inc_refcnt(dir->nd_parent_inode_entry);
     memset(&dir->nd_dirent, 0, sizeof dir->nd_dirent);
-    dir->fops = &nffs_ops;
 
     *out_dir = dir;
 
@@ -108,7 +104,6 @@ nffs_dir_read(struct nffs_dir *dir, struct nffs_dirent **out_dirent)
     }
 
     nffs_inode_inc_refcnt(child);
-    dir->nd_dirent.fops = &nffs_ops;
     *out_dirent = &dir->nd_dirent;
 
     return 0;
