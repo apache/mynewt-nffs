@@ -20,14 +20,14 @@
 #include <assert.h>
 #include <string.h>
 #include <nffs/nffs.h>
-#include <nffs/glue.h>
+#include <nffs/os.h>
 
 static struct nffs_file *
 nffs_file_alloc(void)
 {
     struct nffs_file *file;
 
-    file = nffs_glue_mempool_get(&nffs_file_pool);
+    file = nffs_os_mempool_get(&nffs_file_pool);
     if (file != NULL) {
         memset(file, 0, sizeof *file);
     }
@@ -41,7 +41,7 @@ nffs_file_free(struct nffs_file *file)
     int rc;
 
     if (file != NULL) {
-        rc = nffs_glue_mempool_free(&nffs_file_pool, file);
+        rc = nffs_os_mempool_free(&nffs_file_pool, file);
         if (rc != 0) {
             return FS_EOS;
         }

@@ -28,40 +28,40 @@
 extern "C" {
 #endif
 
-extern nffs_mempool_t nffs_file_pool;
-extern nffs_mempool_t nffs_dir_pool;
-extern nffs_mempool_t nffs_inode_entry_pool;
-extern nffs_mempool_t nffs_block_entry_pool;
-extern nffs_mempool_t nffs_cache_inode_pool;
-extern nffs_mempool_t nffs_cache_block_pool;
+extern nffs_os_mempool_t nffs_file_pool;
+extern nffs_os_mempool_t nffs_dir_pool;
+extern nffs_os_mempool_t nffs_inode_entry_pool;
+extern nffs_os_mempool_t nffs_block_entry_pool;
+extern nffs_os_mempool_t nffs_cache_inode_pool;
+extern nffs_os_mempool_t nffs_cache_block_pool;
 
 /* Initialize mempools */
-int nffs_glue_mempool_init(void);
+int nffs_os_mempool_init(void);
 
 /* Get block from mempool */
-void *nffs_glue_mempool_get(nffs_mempool_t *pool);
+void *nffs_os_mempool_get(nffs_os_mempool_t *pool);
 
 /* Free block from mempool */
-int nffs_glue_mempool_free(nffs_mempool_t *pool, void *block);
+int nffs_os_mempool_free(nffs_os_mempool_t *pool, void *block);
 
 /* Read from flash */
-int nffs_glue_flash_read(uint8_t id, uint32_t address, void *dst,
-                         uint32_t num_bytes);
+int nffs_os_flash_read(uint8_t id, uint32_t address, void *dst,
+                       uint32_t num_bytes);
 
 /* Write to flash */
-int nffs_glue_flash_write(uint8_t id, uint32_t address, const void *src,
-                          uint32_t num_bytes);
+int nffs_os_flash_write(uint8_t id, uint32_t address, const void *src,
+                        uint32_t num_bytes);
 
 /* Erase flash */
-int nffs_glue_flash_erase(uint8_t id, uint32_t address, uint32_t num_bytes);
+int nffs_os_flash_erase(uint8_t id, uint32_t address, uint32_t num_bytes);
 
 /* Get flash sector information */
-int nffs_glue_flash_info(uint8_t id, uint32_t sector, uint32_t *address,
-                         uint32_t *size);
+int nffs_os_flash_info(uint8_t id, uint32_t sector, uint32_t *address,
+                       uint32_t *size);
 
 /* CRC16-CCIT implementation */
-uint16_t nffs_glue_crc16_ccitt(uint16_t initial_crc, const void *buf, int len,
-                               int final);
+uint16_t nffs_os_crc16_ccitt(uint16_t initial_crc, const void *buf, int len,
+                             int final);
 
 #ifdef __cplusplus
 }

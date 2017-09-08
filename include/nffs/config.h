@@ -3,7 +3,7 @@
 
 #if __ZEPHYR__
 
-typedef struct k_mem_slab nffs_mempool_t;
+typedef struct k_mem_slab nffs_os_mempool_t;
 
 #define NFFS_CONFIG_USE_HEAP            0
 #define NFFS_CONFIG_MAX_AREAS           CONFIG_NFFS_FILESYSTEM_MAX_AREAS
@@ -13,7 +13,7 @@ typedef struct k_mem_slab nffs_mempool_t;
 
 /* Default to Mynewt */
 
-typedef struct os_mempool nffs_mempool_t;
+typedef struct os_mempool nffs_os_mempool_t;
 
 #define NFFS_CONFIG_USE_HEAP            1
 #define NFFS_CONFIG_MAX_AREAS           256

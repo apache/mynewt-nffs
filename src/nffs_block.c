@@ -21,14 +21,14 @@
 #include <assert.h>
 #include <string.h>
 #include <nffs/nffs.h>
-#include <nffs/glue.h>
+#include <nffs/os.h>
 
 struct nffs_hash_entry *
 nffs_block_entry_alloc(void)
 {
     struct nffs_hash_entry *entry;
 
-    entry = nffs_glue_mempool_get(&nffs_block_entry_pool);
+    entry = nffs_os_mempool_get(&nffs_block_entry_pool);
     if (entry != NULL) {
         memset(entry, 0, sizeof *entry);
     }
@@ -40,7 +40,7 @@ void
 nffs_block_entry_free(struct nffs_hash_entry *block_entry)
 {
     assert(nffs_hash_id_is_block(block_entry->nhe_id));
-    nffs_glue_mempool_free(&nffs_block_entry_pool, block_entry);
+    nffs_os_mempool_free(&nffs_block_entry_pool, block_entry);
 }
 
 /**

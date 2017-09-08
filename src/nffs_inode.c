@@ -21,7 +21,7 @@
 #include <string.h>
 #include <assert.h>
 #include <nffs/nffs.h>
-#include <nffs/glue.h>
+#include <nffs/os.h>
 
 /* Partition the flash buffer into two equal halves; used for filename
  * comparisons.
@@ -39,7 +39,7 @@ nffs_inode_entry_alloc(void)
 {
     struct nffs_inode_entry *inode_entry;
 
-    inode_entry = nffs_glue_mempool_get(&nffs_inode_entry_pool);
+    inode_entry = nffs_os_mempool_get(&nffs_inode_entry_pool);
     if (inode_entry != NULL) {
         memset(inode_entry, 0, sizeof *inode_entry);
     }
@@ -53,7 +53,7 @@ nffs_inode_entry_free(struct nffs_inode_entry *inode_entry)
     if (inode_entry != NULL) {
         assert(!nffs_inode_getflags(inode_entry, NFFS_INODE_FLAG_INHASH));
         assert(nffs_hash_id_is_inode(inode_entry->nie_hash_entry.nhe_id));
-        nffs_glue_mempool_free(&nffs_inode_entry_pool, inode_entry);
+        nffs_os_mempool_free(&nffs_inode_entry_pool, inode_entry);
     }
 }
 

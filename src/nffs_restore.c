@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <nffs/nffs.h>
-#include <nffs/glue.h>
+#include <nffs/os.h>
 
 /**
  * The size of the largest data block encountered during detection.  This is
@@ -1104,7 +1104,7 @@ nffs_restore_detect_one_area(uint8_t flash_id, uint32_t area_offset,
     int rc;
 
     STATS_INC(nffs_stats, nffs_readcnt_detect);
-    rc = nffs_glue_flash_read(flash_id, area_offset, out_disk_area,
+    rc = nffs_os_flash_read(flash_id, area_offset, out_disk_area,
                         sizeof *out_disk_area);
     if (rc != 0) {
         return FS_EHW;

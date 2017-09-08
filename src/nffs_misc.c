@@ -22,7 +22,7 @@
 #include <string.h>
 #include <kernel.h>
 #include <nffs/nffs.h>
-#include <nffs/glue.h>
+#include <nffs/os.h>
 
 /**
  * Determines if the file system contains a valid root directory.  For the root
@@ -366,7 +366,7 @@ nffs_misc_reset(void)
 
     nffs_cache_clear();
 
-    nffs_glue_mempool_init();
+    nffs_os_mempool_init();
 
     rc = nffs_hash_init();
     if (rc != 0) {
@@ -425,7 +425,7 @@ nffs_misc_desc_from_flash_area(const struct nffs_flash_desc *flash, int *cnt, st
     *cnt = 0;
 
     for (i = 0; i < flash->sector_count; i++) {
-        nffs_glue_flash_info(flash->id, i, &start, &size);
+        nffs_os_flash_info(flash->id, i, &start, &size);
         if (start >= flash->area_offset && start < flash->area_offset + flash->area_size) {
             if (first_idx == -1) {
                 first_idx = i;
@@ -443,7 +443,7 @@ nffs_misc_desc_from_flash_area(const struct nffs_flash_desc *flash, int *cnt, st
 
     move_on = 1;
     for (i = first_idx, j = 0; i < last_idx + 1; i++) {
-        nffs_glue_flash_info(flash->id, i, &start, &size);
+        nffs_os_flash_info(flash->id, i, &start, &size);
         if (move_on) {
             nad[j].nad_flash_id = flash->id;
             nad[j].nad_offset = start;
