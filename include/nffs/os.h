@@ -17,8 +17,8 @@
  * under the License.
  */
 
-#ifndef H_GLUE_
-#define H_GLUE_
+#ifndef H_OS_
+#define H_OS_
 
 #include <stdint.h>
 #include <kernel.h>
