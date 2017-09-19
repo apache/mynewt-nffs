@@ -20,11 +20,24 @@
 -->
 
 ## Overview
-Newtron Flash File System (nffs) is a flash file system with the following
+The Newtron Flash File System (NFFS) is a flash file system with the following
 priorities:
-    * Minimal RAM usage
-    * Reliability
+
+* Minimal RAM usage
+* Reliability
+
+## RTOS support
+NFFS currently supports the following operating systems:
+
+* [Mynewt](https://github.com/apache/mynewt-core)
+* [Zephyr](https://github.com/zephyrproject-rtos/zephyr)
+
+## Repository
+The source code for NFFS lives in the following repository on GitHub:
+* https://github.com/apache/mynewt-nffs
+
+All changes to the NFFS codebase should be submitted as Pull Request to the repository above. 
 
 ## Issues
-Issues should be reported to https://issues.apache.org/jira/projects/MYNEWT
-Use 'NFFS' component when reporting bug against Apache Mynewt project.
+Issues must be reported to the Mynewt Jira: https://issues.apache.org/jira/projects/MYNEWT
+Use the 'NFFS' component when reporting bug against the Apache Mynewt project.
