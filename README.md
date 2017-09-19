@@ -25,3 +25,6 @@ priorities:
     * Minimal RAM usage
     * Reliability
 
+## Issues
+Issues should be reported to https://issues.apache.org/jira/projects/MYNEWT
+Use 'NFFS' component when reporting bug against Apache Mynewt project.
