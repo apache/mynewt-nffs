@@ -578,6 +578,8 @@ int nffs_write_to_file(struct nffs_file *file, const void *data, int len);
 #else
 
 /* Default to Mynewt */
+#include "log/log.h"
+#include "testutil/testutil.h"
 
 #define NFFS_LOG(lvl, ...) \
     LOG_ ## lvl(&nffs_log, LOG_MODULE_NFFS, __VA_ARGS__)
