@@ -18,6 +18,7 @@
  */
 
 #include "nffs_test_utils.h"
+#include <nffs/nffs.h>
 
 void process_inode_entry(struct nffs_inode_entry *inode_entry, int indent);
 
