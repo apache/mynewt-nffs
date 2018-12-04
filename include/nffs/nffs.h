@@ -328,7 +328,11 @@ extern void *nffs_dir_mem;
 extern uint32_t nffs_hash_next_file_id;
 extern uint32_t nffs_hash_next_dir_id;
 extern uint32_t nffs_hash_next_block_id;
-extern struct nffs_area nffs_areas[CONFIG_NFFS_FILESYSTEM_MAX_AREAS];
+#if NFFS_CONFIG_USE_HEAP
+struct nffs_area *nffs_areas;
+#else
+extern struct nffs_area nffs_areas[NFFS_CONFIG_MAX_AREAS];
+#endif
 extern uint8_t nffs_num_areas;
 extern uint8_t nffs_scratch_area_idx;
 extern uint16_t nffs_block_max_data_sz;
