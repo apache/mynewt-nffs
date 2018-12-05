@@ -28,7 +28,7 @@
 #include "nffs/nffs.h"
 #include "nffs_test.h"
 #include "nffs_test_priv.h"
-#include "nffs_priv.h"
+#include "nffs_test_utils.h"
 
 #if 0
 #ifdef ARCH_sim

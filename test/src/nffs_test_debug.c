@@ -27,7 +27,6 @@
 #include "nffs/nffs.h"
 #include "nffs_test.h"
 #include "nffs_test_priv.h"
-#include "nffs_priv.h"
 
 int print_verbose;
 

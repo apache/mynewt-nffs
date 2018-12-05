@@ -45,10 +45,9 @@
 #include "testutil/testutil.h"
 #include "fs/fs.h"
 #include "nffs/nffs.h"
-#include "nffs/nffs_test.h"
-#include "nffs_test_priv.h"
-#include "nffs_priv.h"
 #include "nffs_test.h"
+#include "nffs_test_priv.h"
+#include "nffs_test_utils.h"
 
 #if MYNEWT_VAL(SELFTEST)
 struct nffs_area_desc nffs_selftest_area_descs[] = {
@@ -120,7 +119,7 @@ nffs_test_suite_gen_1_1_init(void)
     tu_suite_set_post_test_cb(nffs_testcase_post, NULL);
     return;
 }
-    
+
 void
 nffs_test_suite_gen_4_32_init(void)
 {
@@ -131,7 +130,7 @@ nffs_test_suite_gen_4_32_init(void)
     tu_suite_set_post_test_cb(nffs_testcase_post, NULL);
     return;
 }
-    
+
 void
 nffs_test_suite_gen_32_1024_init(void)
 {
