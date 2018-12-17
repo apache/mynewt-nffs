@@ -1,4 +1,5 @@
-#
+#!/bin/bash -x
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -6,7 +7,7 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #  http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing,
@@ -15,27 +16,19 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
 
-pkg.name: "nffs"
-pkg.description: Newtron Flash File System.
-pkg.author: "Apache Mynewt <dev@mynewt.apache.org>"
-pkg.homepage: "http://mynewt.apache.org/"
-pkg.keywords:
-    - file
-    - filesystem
-    - ffs
+pushd $HOME
+git clone --depth=1 https://github.com/apache/mynewt-newt
+[[ $? -ne 0 ]] && exit 1
 
-pkg.deps:
-    - "@apache-mynewt-core/fs/fs"
-    - "@apache-mynewt-core/util/crc"
-    - "@apache-mynewt-core/hw/hal"
-    - "@apache-mynewt-core/kernel/os"
-    - "@apache-mynewt-core/test/testutil"
-    - "@apache-mynewt-core/sys/flash_map"
-pkg.req_apis:
-    - log
-    - stats
+pushd mynewt-newt && ./build.sh
+[[ $? -ne 0 ]] && exit 1
 
-pkg.init:
-    nffs_pkg_init: 200
+cp newt/newt $HOME/bin
+popd
+popd
+
+ln -s /usr/bin/gcc-7 $HOME/bin/gcc
+
+mkdir -p repos/apache-mynewt-core
+git clone --depth=1 https://github.com/apache/mynewt-core repos/apache-mynewt-core

@@ -28,16 +28,28 @@
 #include "testutil/testutil.h"
 #include "fs/fs.h"
 #include "nffs/nffs.h"
+#include "nffs/os.h"
 #include "nffs_test.h"
 #include "nffs_test_priv.h"
-#include "nffs_priv.h"
 
 #ifdef __cplusplus
 #extern "C" {
 #endif
 
-extern struct nffs_hash_entry *nffs_test_touched_entries;
-int nffs_test_num_touched_entries;
+#define nffs_format(x) nffs_format_full(x)
+#define nffs_detect(x) nffs_restore_full(x)
+
+struct nffs_config {
+    uint32_t nc_num_inodes;
+    uint32_t nc_num_blocks;
+    uint32_t nc_num_files;
+    uint32_t nc_num_dirs;
+    uint32_t nc_num_cache_inodes;
+    uint32_t nc_num_cache_blocks;
+};
+extern struct nffs_config nffs_config;
+
+int nffs_init(void);
 
 extern int flash_native_memset(uint32_t offset, uint8_t c, uint32_t len);
 

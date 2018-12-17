@@ -15,18 +15,18 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-pkg.name: fs/nffs/test
+pkg.name: "test"
 pkg.type: unittest
 pkg.description: "NFFS unit tests."
 pkg.author: "Apache Mynewt <dev@mynewt.apache.org>"
 pkg.homepage: "http://mynewt.apache.org/"
 pkg.keywords:
 
-pkg.deps: 
-    - fs/nffs
-    - test/testutil
+pkg.deps:
+    - "@apache-mynewt-nffs/nffs"
+    - "@apache-mynewt-core/test/testutil"
 
 pkg.deps.SELFTEST:
-    - sys/console/stub
-    - sys/log/full
-    - sys/stats/stub
+    - "@apache-mynewt-core/sys/console/stub"
+    - "@apache-mynewt-core/sys/log/full"
+    - "@apache-mynewt-core/sys/stats/stub"

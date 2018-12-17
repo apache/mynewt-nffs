@@ -27,7 +27,6 @@
 #include "nffs/nffs.h"
 #include "nffs_test.h"
 #include "nffs_test_priv.h"
-#include "nffs_priv.h"
 
 int print_verbose;
 
@@ -166,7 +165,7 @@ print_nffs_flash_areas(int verbose)
     int i;
 
     for (i = 0; nffs_current_area_descs[i].nad_length != 0; i++) {
-        if (i > NFFS_MAX_AREAS) {
+        if (i > NFFS_CONFIG_MAX_AREAS) {
             return;
         }
         area.na_offset = nffs_current_area_descs[i].nad_offset;
