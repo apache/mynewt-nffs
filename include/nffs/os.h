@@ -21,9 +21,29 @@
 #define H_OS_
 
 #include <stdint.h>
-#if __ZEPHYR__
+
+#if MYNEWT
+
+#include "fs/fs.h"
+#include "fs/fs_if.h"
+extern struct fs_ops nffs_ops;
+#define OS_MULTIFS_CONTAINER struct fs_ops *fops
+#define OS_MULTIFS_SETOPS(x) ((x) = &nffs_ops)
+
+#elif __ZEPHYR__
+
 #include <kernel.h>
+#include <zephyr/types.h>
+#include <stats.h>
+#define OS_MULTIFS_CONTAINER
+#define OS_MULTIFS_SETOPS(x)
+
+#else
+
+#error "Unsupported OS"
+
 #endif
+
 #include <nffs/config.h>
 
 #ifdef __cplusplus

@@ -24,11 +24,7 @@
 #include <inttypes.h>
 #include <nffs/config.h>
 #include <nffs/queue.h>
-
-#if __ZEPHYR__
-#include <zephyr/types.h>
-#include <stats.h>
-#endif
+#include <nffs/os.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -213,9 +209,7 @@ struct nffs_block {
 };
 
 struct nffs_file {
-#if !__ZEPHYR__
-    struct fs_ops *fops;
-#endif
+    OS_MULTIFS_CONTAINER;
     struct nffs_inode_entry *nf_inode_entry;
     uint32_t nf_offset;
     uint8_t nf_access_flags;
@@ -283,16 +277,12 @@ struct nffs_cache_inode {
 };
 
 struct nffs_dirent {
-#if !__ZEPHYR__
-    struct fs_ops *fops;
-#endif
+    OS_MULTIFS_CONTAINER;
     struct nffs_inode_entry *nde_inode_entry;
 };
 
 struct nffs_dir {
-#if !__ZEPHYR__
-    struct fs_ops *fops;
-#endif
+    OS_MULTIFS_CONTAINER;
     struct nffs_inode_entry *nd_parent_inode_entry;
     struct nffs_dirent nd_dirent;
 };
@@ -575,7 +565,7 @@ int nffs_write_to_file(struct nffs_file *file, const void *data, int len);
 #define MYNEWT_VAL(val) 0
 #define ASSERT_IF_TEST(cond)
 
-#else
+#elif MYNEWT
 
 /* Default to Mynewt */
 #include "log/log.h"
@@ -583,6 +573,7 @@ int nffs_write_to_file(struct nffs_file *file, const void *data, int len);
 
 #define NFFS_LOG(lvl, ...) \
     LOG_ ## lvl(&nffs_log, LOG_MODULE_NFFS, __VA_ARGS__)
+
 #endif
 
 #ifdef __cplusplus
