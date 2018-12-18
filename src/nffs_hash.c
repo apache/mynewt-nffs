@@ -20,10 +20,8 @@
 #include <stddef.h>
 #include <string.h>
 #include <assert.h>
-#if __ZEPHYR__
-#include <kernel.h>
-#endif
 #include <nffs/nffs.h>
+#include <nffs/os.h>
 
 struct nffs_hash_list *nffs_hash;
 #if !NFFS_CONFIG_USE_HEAP

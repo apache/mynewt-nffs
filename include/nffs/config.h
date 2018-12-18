@@ -28,7 +28,7 @@ typedef struct k_mem_slab nffs_os_mempool_t;
 #define NFFS_CONFIG_MAX_AREAS           CONFIG_NFFS_FILESYSTEM_MAX_AREAS
 #define NFFS_CONFIG_MAX_BLOCK_SIZE      CONFIG_NFFS_FILESYSTEM_MAX_BLOCK_SIZE
 
-#else
+#elif MYNEWT
 
 /* Default to Mynewt */
 

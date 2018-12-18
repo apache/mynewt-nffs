@@ -19,10 +19,8 @@
 
 #include <assert.h>
 #include <string.h>
-#if __ZEPHYR__
-#include <kernel.h>
-#endif
 #include <nffs/nffs.h>
+#include <nffs/os.h>
 
 /**
  * Keeps track of the number of garbage collections performed.  The exact
