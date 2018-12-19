@@ -1,3 +1,5 @@
+#!/bin/bash -x
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,48 +17,24 @@
 # specific language governing permissions and limitations
 # under the License.
 
-language: go
+# Debugging
+go version
 
-_addons: &addon_conf
+mkdir -p $HOME/bin
+export PATH=$HOME/bin:$PATH
 
-go:
-  - "1.10"
+pushd $HOME
+git clone --depth=1 https://github.com/apache/mynewt-newt
+[[ $? -ne 0 ]] && exit 1
 
-git:
-  depth: false
+pushd mynewt-newt && ./build.sh
+[[ $? -ne 0 ]] && exit 1
 
-matrix:
-  include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-7-multilib
-            - linux-libc-dev:i386
-      env:
-        - OS=mynewt
-    - os: linux
-      language: python
-      python:
-        - "3.5"
-      addons:
-        apt:
-          packages:
-            - gperf
-      env:
-        - OS=zephyr
+cp newt/newt $HOME/bin
+popd
+popd
 
-before_install:
-  - printenv
+ln -s /usr/bin/gcc-7 $HOME/bin/gcc
 
-install:
-  - ./ci/${OS}_install.sh
-
-script:
-  - ./ci/${OS}_run.sh
-
-cache:
-  directories:
-  - $HOME/zephyr_sdk_download
+mkdir -p repos/apache-mynewt-core
+git clone --depth=1 https://github.com/apache/mynewt-core repos/apache-mynewt-core
