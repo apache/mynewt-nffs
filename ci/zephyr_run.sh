@@ -16,17 +16,28 @@ make
 output="${HOME}/zephyr-results.txt"
 (make run | tee ${output}) &
 
-# qemu output strings in case of failure
-failed1="ASSERTION FAIL"
-failed2="CPU Page Fault"
 succeded="PROJECT EXECUTION SUCCESSFUL"
+
+# There are multiple possible output messages, depending on which test was
+# run, where it failed, or when some low-level fault in qemu happens.
+declare -a finished_msgs=(
+    "ASSERTION FAIL"
+    "CPU Page Fault"
+    "PROJECT EXECUTION FAILED"
+    "${succeded}"
+)
+
 MAX_LOOPS=10
 count=1
-while true; do
-    [[ $count == $MAX_LOOPS ]] && break
-    grep -q -e "${failed1}" -e "${failed2}" -e "${succeded}" ${output}
-    [[ $? -eq 0 ]] && break
+while [[ $count -lt $MAX_LOOPS ]]; do
+    for msg in "${finished_msgs[@]}"; do
+        grep -q -e "${msg}" ${output}
+        rc=$?
+        # break inner loop
+        [[ ${rc} -eq 0 ]] && break
+    done
 
+    [[ ${rc} -eq 0 ]] && break
     sleep 3
     count=$((count + 1))
 done
@@ -38,8 +49,4 @@ sleep 5  # give some time for qemu to close
 
 cat ${output}
 
-grep -q -e "${failed1}" -e "${failed2}" ${output}
-[[ $? -eq 0 ]] && exit 1
-
-# If the grep above fails, the test succeeded, so force success exit!
-exit 0
+grep -q -e "${succeded}" ${output}
